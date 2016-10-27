@@ -1,0 +1,14 @@
+---
+name: "howden-io"
+version: "1.0.0"
+description: "Redirects users away from howden.io"
+keywords:
+  - "Howden"
+home: "https://www.howden.io/"
+sources:
+  - "https://github.com/andrewhowdencom/howden.io"
+maintainers: 
+  - name: "Andrew Howden"
+    email: "hello@andrewhowden.com"
+engine: gotpl 
+icon: "nope" # Todo: This must be SVG or PNG

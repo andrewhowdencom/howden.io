@@ -1,0 +1,88 @@
+---
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  labels:
+    application: "nginx"
+    role: "webserver"
+  name: "webserver"
+  namespace: "howden-io"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: "nginx"
+      role: "webserver"
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: "RollingUpdate"
+  template:
+    metadata:
+      labels:
+        application: "nginx"
+        role: "webserver"
+    spec:
+      # volumes:
+      # - name: "webserver-etc-conf-d"
+      # configMap:
+      #   name: "webserver-etc-conf-d"
+      # - name: "webserver-data"
+      #   hostPath:
+      #     path: /data/webserver/
+      containers:
+      - name: "nginx"
+        # env:
+        # - name: "FOO"
+        #   value: "BAR"
+        image: "nginx:1.11.5-alpine" # Todo: Update this
+        imagePullPolicy: "IfNotPresent"
+        # args:
+        #   - "command"
+        #   - "line" 
+        #   - "arguments"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "512Mi"
+        ports:
+        - containerPort: 80
+          protocol: "TCP"
+          name: "http"
+        # volumeMounts:
+        # - name: "webserver-etc-conf-d"
+        #   readOnly: true
+        #   mountPath: "/etc/webserver/conf.d"
+        # - name: "webserver-data
+        #   readOnly: false
+        #   mountPath: "/data"
+        livenessProbe:
+          httpGet:
+            # Path to probe; should be cheap, but representative of typical behavior
+            path: "/"
+            port: 80
+            httpHeaders:
+              - name: "Host"
+                value: "howden.io" # Todo: Fix this
+              #- name: "X-Custom-Header"
+              #  value: "Awesome"
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        readinessProbe:
+          httpGet:
+            # Path to probe; akin to a status check. 
+            path: "/"
+            port: 80
+            httpHeaders:
+              - name: "Host"
+                value: "howden.io" # Todo: Fix this
+              #- name: "X-Custom-Header"
+              #  value: "Awesome"
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+      restartPolicy: "Always"
+      securityContext: {} 
